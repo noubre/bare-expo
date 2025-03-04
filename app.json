@@ -32,6 +32,17 @@
             "minSdkVersion": 28
           }
         }
+      ],
+      [
+        "expo-bare-kit",
+        {
+          "ios": {
+            "notifications": {
+              "targetName": "NotificationServiceExtension",
+              "worklet": "push-notif.js",
+            }
+          }
+        }
       ]
     ]
   }
