@@ -38,8 +38,7 @@
         {
           "ios": {
             "notifications": {
-              "targetName": "NotificationServiceExtension",
-              "worklet": "push-notif.js",
+              "worklet": "push-notif.js"
             }
           }
         }
