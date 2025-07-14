@@ -9,7 +9,7 @@
 import '../polyfills';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, FlatList, StyleSheet, ActivityIndicator, useWindowDimensions } from 'react-native';
+import { View, Text, TextInput, Button, FlatList, StyleSheet, ActivityIndicator, useWindowDimensions, TouchableOpacity } from 'react-native';
 import { Worklet } from 'react-native-bare-kit';
 import bundle from './app.bundle.mjs';
 import b4a from 'b4a';
@@ -33,6 +33,7 @@ export default function App() {
   const [models, setModels] = useState<Model[]>([]);
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [isPickerExpanded, setIsPickerExpanded] = useState<boolean>(false);
   const [prompt, setPrompt] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const { width } = useWindowDimensions();
@@ -184,14 +185,26 @@ export default function App() {
         </View>
       ) : (
         <>
-          <Picker
-            selectedValue={selectedModel}
-            onValueChange={(itemValue) => setSelectedModel(itemValue)}
-          >
-            {models.map((model) => (
-              <Picker.Item key={model.id} label={model.name || model.id} value={model.id} />
-            ))}
-          </Picker>
+          <TouchableOpacity onPress={() => setIsPickerExpanded(!isPickerExpanded)} style={styles.pickerHeader}>
+            <Text style={styles.pickerHeaderText}>
+              Selected Model: {models.find(m => m.id === selectedModel)?.name || selectedModel || 'None'}
+            </Text>
+            <Text style={styles.pickerToggleIcon}>{isPickerExpanded ? '▲' : '▼'}</Text>
+          </TouchableOpacity>
+          {isPickerExpanded && (
+            <Picker
+              selectedValue={selectedModel}
+              onValueChange={(itemValue) => {
+                setSelectedModel(itemValue);
+                setIsPickerExpanded(false); // Collapse after selection
+              }}
+              style={styles.picker}
+            >
+              {models.map((model) => (
+                <Picker.Item key={model.id} label={model.name || model.id} value={model.id} />
+              ))}
+            </Picker>
+          )}
           <FlatList
             data={messages}
             renderItem={renderMessage}
@@ -226,4 +239,28 @@ const styles = StyleSheet.create({
   aiMessage: { alignSelf: 'flex-start', backgroundColor: '#fff' },
   inputContainer: { flexDirection: 'row', alignItems: 'center' },
   promptInput: { flex: 1, borderWidth: 1, padding: 10, marginRight: 10 },
+  pickerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    marginBottom: 10,
+    backgroundColor: '#f0f0f0',
+  },
+  pickerHeaderText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  pickerToggleIcon: {
+    fontSize: 16,
+  },
+  picker: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    marginBottom: 10,
+  },
 });
