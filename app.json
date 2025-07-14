@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Bare",
-    "slug": "bare-expo",
+    "slug": "deepseek",
     "version": "1.0.0",
     "newArchEnabled": true,
     "orientation": "portrait",
@@ -25,7 +25,9 @@
       "package": "to.holepunch.bare.expo"
     },
     "plugins": [
-      ["expo-router"],
+      [
+        "expo-router"
+      ],
       [
         "expo-build-properties",
         {
@@ -34,6 +36,13 @@
           }
         }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "ed7799ef-3556-4d24-ac39-21595f35809b"
+      }
+    },
+    "owner": "noubre"
   }
 }
