@@ -197,6 +197,8 @@ export default function App() {
             renderItem={renderMessage}
             keyExtractor={(item, index) => index.toString()}
             style={styles.chatList}
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={{ paddingBottom: 20 }}
           />
           {loading && <ActivityIndicator />}
           <View style={styles.inputContainer}>
