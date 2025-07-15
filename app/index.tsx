@@ -27,6 +27,24 @@ interface Model {
   name: string;
 }
 
+const Thought = ({ content }: { content: string }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const { width } = useWindowDimensions();
+
+  return (
+    <View style={styles.thoughtContainer}>
+      <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)} style={styles.thoughtButton}>
+        <Text style={styles.thoughtButtonText}>{isExpanded ? 'Hide Thought' : 'Show Thought'}</Text>
+      </TouchableOpacity>
+      {isExpanded && (
+        <View style={styles.thoughtContent}>
+          <RenderHtml contentWidth={width - 60} source={{ html: content }} />
+        </View>
+      )}
+    </View>
+  );
+};
+
 export default function App() {
   const [serverKey, setServerKey] = useState<string>('');
   const [connected, setConnected] = useState<boolean>(false);
@@ -168,15 +186,31 @@ export default function App() {
     });
   };
 
-  const renderMessage = ({ item }: { item: Message }) => (
-    <View style={[styles.message, item.role === 'user' ? styles.userMessage : styles.aiMessage]}>
-      {item.role === 'user' ? (
-        <Text>{item.content}</Text>
-      ) : (
-        <RenderHtml contentWidth={width - 40} source={{ html: item.content || '<p>Loading...</p>' }} />
-      )}
-    </View>
-  );
+  const renderMessage = ({ item }: { item: Message }) => {
+    if (item.role === 'user') {
+      return (
+        <View style={[styles.message, styles.userMessage]}>
+          <Text>{item.content}</Text>
+        </View>
+      );
+    }
+
+    const thoughtRegex = /<think>([\s\S]*?)<\/think>/;
+    const thoughtMatch = item.content.match(thoughtRegex);
+    const thoughtContent = thoughtMatch && thoughtMatch[1].trim() ? thoughtMatch[1].trim() : null;
+    const mainContent = item.content.replace(thoughtRegex, '').trim();
+
+    return (
+      <View style={[styles.message, styles.aiMessage]}>
+        {thoughtContent && <Thought content={thoughtContent} />}
+        {mainContent ? (
+          <RenderHtml contentWidth={width - 40} source={{ html: mainContent }} />
+        ) : (
+          !thoughtContent && <RenderHtml contentWidth={width - 40} source={{ html: '<p>Loading...</p>' }} />
+        )}
+      </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -246,6 +280,27 @@ const styles = StyleSheet.create({
   aiMessage: { alignSelf: 'flex-start', backgroundColor: '#fff' },
   inputContainer: { flexDirection: 'row', alignItems: 'center' },
   promptInput: { flex: 1, borderWidth: 1, padding: 10, marginRight: 10 },
+  thoughtContainer: {
+    marginBottom: 10,
+    backgroundColor: '#f7f7f7',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    overflow: 'hidden',
+  },
+  thoughtButton: {
+    padding: 12,
+    backgroundColor: '#efefef',
+    alignItems: 'center',
+  },
+  thoughtButtonText: {
+    fontWeight: 'bold',
+    color: '#555',
+  },
+  thoughtContent: {
+    padding: 12,
+    backgroundColor: '#fff',
+  },
   pickerHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',

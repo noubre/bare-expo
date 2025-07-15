@@ -5,6 +5,7 @@
 - Core memory bank files have been initialized, providing foundational context for the project.
 - The `SyntaxError: JSON Parse error: Unexpected character: {` has been addressed by implementing a robust JSON parsing mechanism in `app/index.tsx` that can handle concatenated JSON objects.
 - The `crypto.getRandomValues()` not supported error has been resolved by polyfilling `crypto` with `react-native-get-random-values`.
+- The app now renders content within `<think>` tags in an expandable button, providing a way to display "thought" processes or metadata without cluttering the main response.
 
 **What's Left to Build:**
 - A deeper understanding of the `b4a` integration and its role in data handling is required.
@@ -16,3 +17,4 @@
 
 **Known Issues:**
 - No critical known issues at this moment, but further testing is required to confirm the stability of the JSON parsing fix, the crypto polyfill, and overall application functionality.
+- The expandable "thought" button feature is new and may require further UI/UX refinements based on user feedback.
