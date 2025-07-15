@@ -65,13 +65,20 @@ export default function App() {
           if (msg.error) {
             alert('Error: ' + msg.error);
             setLoading(false);
-          } else if (msg.isComplete) {
-            setMessages((prev) => {
-              const newMessages = [...prev];
-              newMessages[newMessages.length - 1].content = msg.data;
-              return newMessages;
-            });
-            setLoading(false);
+          } else {
+            if (msg.data) {
+              setMessages((prevMessages) => {
+                const newMessages = [...prevMessages];
+                const lastMessage = newMessages[newMessages.length - 1];
+                if (lastMessage && lastMessage.role === 'assistant') {
+                  lastMessage.content += msg.data;
+                }
+                return newMessages;
+              });
+            }
+            if (msg.isComplete) {
+              setLoading(false);
+            }
           }
           break;
         case 'disconnected':
