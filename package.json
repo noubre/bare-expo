@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/holepunchto/bare-expo#readme",
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-picker/picker": "^2.11.1",
     "b4a": "^1.6.7",
     "events": "^3.3.0",

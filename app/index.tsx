@@ -9,9 +9,10 @@
 import '../polyfills';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, FlatList, StyleSheet, ActivityIndicator, useWindowDimensions, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Button, FlatList, StyleSheet, ActivityIndicator, useWindowDimensions, TouchableOpacity, Switch } from 'react-native';
 import { Worklet } from 'react-native-bare-kit';
 import bundle from './app.bundle.mjs';
+import { ThemeProvider, useTheme } from './styles/themeContext';
 import b4a from 'b4a';
 import { marked } from 'marked';
 import RenderHtml from 'react-native-render-html';
@@ -21,6 +22,12 @@ marked.setOptions({
 });
 import { Picker } from '@react-native-picker/picker';
 import { v4 as uuidv4 } from 'uuid';
+
+const AppWrapper = () => (
+  <ThemeProvider>
+    <AppContent />
+  </ThemeProvider>
+);
 
 interface Message {
   role: 'user' | 'assistant';
@@ -35,14 +42,16 @@ interface Model {
 const Thought = ({ content }: { content: string }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { width } = useWindowDimensions();
+  const { theme } = useTheme(); // Access theme here
+  const thoughtStyles = getStyles(theme);
 
   return (
-    <View style={styles.thoughtContainer}>
-      <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)} style={styles.thoughtButton}>
-        <Text style={styles.thoughtButtonText}>{isExpanded ? 'Hide Thought' : 'Show Thought'}</Text>
+    <View style={thoughtStyles.thoughtContainer}>
+      <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)} style={thoughtStyles.thoughtButton}>
+        <Text style={thoughtStyles.thoughtButtonText}>{isExpanded ? 'Hide Thought' : 'Show Thought'}</Text>
       </TouchableOpacity>
       {isExpanded && (
-        <View style={styles.thoughtContent}>
+        <View style={thoughtStyles.thoughtContent}>
           <RenderHtml contentWidth={width - 64} source={{ html: marked.parse(content) as string }} />
         </View>
       )}
@@ -50,7 +59,9 @@ const Thought = ({ content }: { content: string }) => {
   );
 };
 
-export default function App() {
+function AppContent() {
+  const { theme, toggleTheme, currentThemeName } = useTheme();
+  const styles = getStyles(theme);
   const [serverKey, setServerKey] = useState<string>('');
   const [connected, setConnected] = useState<boolean>(false);
   const [models, setModels] = useState<Model[]>([]);
@@ -192,9 +203,10 @@ export default function App() {
   };
 
   const renderMessage = ({ item }: { item: Message }) => {
+    const messageStyles = getStyles(theme);
     if (item.role === 'user') {
       return (
-        <View style={[styles.message, styles.userMessage]}>
+        <View style={[messageStyles.message, messageStyles.userMessage]}>
           <RenderHtml contentWidth={width - 50} source={{ html: marked.parse(item.content) as string }} />
         </View>
       );
@@ -206,7 +218,7 @@ export default function App() {
     const mainContent = item.content.replace(thoughtRegex, '').trim();
 
     return (
-      <View style={[styles.message, styles.aiMessage]}>
+      <View style={[messageStyles.message, messageStyles.aiMessage]}>
         {thoughtContent && <Thought content={thoughtContent} />}
         {mainContent ? (
           <RenderHtml contentWidth={width - 50} source={{ html: marked.parse(mainContent) as string }} />
@@ -219,6 +231,20 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Bare Expo</Text>
+        <View style={styles.themeSwitcher}>
+          <Text style={styles.themeLabel}>Light</Text>
+          <Switch
+            trackColor={{ false: "#767577", true: "#81b0ff" }}
+            thumbColor={currentThemeName === 'dark' ? "#f5dd4b" : "#f4f3f4"}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={toggleTheme}
+            value={currentThemeName === 'dark'}
+          />
+          <Text style={styles.themeLabel}>Dark</Text>
+        </View>
+      </View>
       {!connected ? (
         <View style={styles.connectSection}>
           <TextInput
@@ -226,8 +252,9 @@ export default function App() {
             placeholder="Enter server public key"
             value={serverKey}
             onChangeText={setServerKey}
+            placeholderTextColor={theme.colors.secondary}
           />
-          <Button title="Connect" onPress={connectToServer} />
+          <Button title="Connect" onPress={connectToServer} color={theme.colors.buttonBackground} />
         </View>
       ) : (
         <>
@@ -245,6 +272,7 @@ export default function App() {
                 setIsPickerExpanded(false); // Collapse after selection
               }}
               style={styles.picker}
+              itemStyle={{ color: theme.colors.text, backgroundColor: theme.colors.background }}
             >
               {models.map((model) => (
                 <Picker.Item key={model.id} label={model.name || model.id} value={model.id} />
@@ -266,8 +294,9 @@ export default function App() {
               placeholder="Type your message..."
               value={prompt}
               onChangeText={setPrompt}
+              placeholderTextColor={theme.colors.secondary}
             />
-            <Button title="Send" onPress={sendMessage} disabled={loading} />
+            <Button title="Send" onPress={sendMessage} disabled={loading} color={theme.colors.buttonBackground} />
           </View>
         </>
       )}
@@ -275,59 +304,122 @@ export default function App() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 10 },
-  connectSection: { flex: 1, justifyContent: 'center' },
-  input: { borderWidth: 1, padding: 10, marginBottom: 10 },
-  chatList: { flex: 1 },
-  message: { padding: 10, marginVertical: 5, borderRadius: 5 },
-  userMessage: { alignSelf: 'flex-end', backgroundColor: '#dcf8c6' },
-  aiMessage: { alignSelf: 'flex-start', backgroundColor: '#fff' },
-  inputContainer: { flexDirection: 'row', alignItems: 'center' },
-  promptInput: { flex: 1, borderWidth: 1, padding: 10, marginRight: 10 },
-  thoughtContainer: {
-    marginBottom: 10,
-    backgroundColor: '#f7f7f7',
-    borderRadius: 8,
+export default AppWrapper;
+
+const getStyles = (theme: any) => StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: theme.spacing.medium,
+    backgroundColor: theme.colors.background,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: theme.spacing.medium,
+  },
+  title: {
+    fontSize: theme.fontSize.large,
+    fontWeight: 'bold',
+    color: theme.colors.text,
+  },
+  themeSwitcher: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  themeLabel: {
+    marginHorizontal: theme.spacing.small,
+    color: theme.colors.text,
+    fontSize: theme.fontSize.small,
+  },
+  connectSection: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  input: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: theme.colors.inputBorder,
+    padding: theme.spacing.medium,
+    marginBottom: theme.spacing.medium,
+    borderRadius: theme.borderRadius.small,
+    color: theme.colors.text,
+  },
+  chatList: {
+    flex: 1,
+  },
+  message: {
+    padding: theme.spacing.medium,
+    marginVertical: theme.spacing.small,
+    borderRadius: theme.borderRadius.medium,
+  },
+  userMessage: {
+    alignSelf: 'flex-end',
+    backgroundColor: theme.colors.userMessageBackground,
+  },
+  aiMessage: {
+    alignSelf: 'flex-start',
+    backgroundColor: theme.colors.aiMessageBackground,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: theme.spacing.medium,
+  },
+  promptInput: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: theme.colors.inputBorder,
+    padding: theme.spacing.medium,
+    marginRight: theme.spacing.medium,
+    borderRadius: theme.borderRadius.small,
+    color: theme.colors.text,
+  },
+  thoughtContainer: {
+    marginBottom: theme.spacing.medium,
+    backgroundColor: theme.colors.thoughtContainerBackground,
+    borderRadius: theme.borderRadius.medium,
+    borderWidth: 1,
+    borderColor: theme.colors.thoughtContainerBorder,
     overflow: 'hidden',
   },
   thoughtButton: {
-    padding: 12,
-    backgroundColor: '#efefef',
+    padding: theme.spacing.medium,
+    backgroundColor: theme.colors.thoughtButtonBackground,
     alignItems: 'center',
   },
   thoughtButtonText: {
     fontWeight: 'bold',
-    color: '#555',
+    color: theme.colors.thoughtButtonText,
   },
   thoughtContent: {
-    padding: 12,
-    backgroundColor: '#fff',
+    padding: theme.spacing.medium,
+    backgroundColor: theme.colors.thoughtContentBackground,
   },
   pickerHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 10,
+    padding: theme.spacing.medium,
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    marginBottom: 10,
-    backgroundColor: '#f0f0f0',
+    borderColor: theme.colors.inputBorder,
+    borderRadius: theme.borderRadius.small,
+    marginBottom: theme.spacing.medium,
+    backgroundColor: theme.colors.pickerHeaderBackground,
   },
   pickerHeaderText: {
-    fontSize: 16,
+    fontSize: theme.fontSize.medium,
     fontWeight: 'bold',
+    color: theme.colors.pickerHeaderText,
   },
   pickerToggleIcon: {
-    fontSize: 16,
+    fontSize: theme.fontSize.medium,
+    color: theme.colors.pickerHeaderText,
   },
   picker: {
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    marginBottom: 10,
+    borderColor: theme.colors.inputBorder,
+    borderRadius: theme.borderRadius.small,
+    marginBottom: theme.spacing.medium,
+    backgroundColor: theme.colors.background,
   },
 });
