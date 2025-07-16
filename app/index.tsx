@@ -43,7 +43,7 @@ const Thought = ({ content }: { content: string }) => {
       </TouchableOpacity>
       {isExpanded && (
         <View style={styles.thoughtContent}>
-          <RenderHtml contentWidth={width - 60} source={{ html: marked.parse(content) as string }} />
+          <RenderHtml contentWidth={width - 64} source={{ html: marked.parse(content) as string }} />
         </View>
       )}
     </View>
@@ -195,7 +195,7 @@ export default function App() {
     if (item.role === 'user') {
       return (
         <View style={[styles.message, styles.userMessage]}>
-          <RenderHtml contentWidth={width - 40} source={{ html: marked.parse(item.content) as string }} />
+          <RenderHtml contentWidth={width - 50} source={{ html: marked.parse(item.content) as string }} />
         </View>
       );
     }
@@ -209,9 +209,9 @@ export default function App() {
       <View style={[styles.message, styles.aiMessage]}>
         {thoughtContent && <Thought content={thoughtContent} />}
         {mainContent ? (
-          <RenderHtml contentWidth={width - 40} source={{ html: marked.parse(mainContent) as string }} />
+          <RenderHtml contentWidth={width - 50} source={{ html: marked.parse(mainContent) as string }} />
         ) : (
-          !thoughtContent && <RenderHtml contentWidth={width - 40} source={{ html: '<p>Loading...</p>' }} />
+          !thoughtContent && <RenderHtml contentWidth={width - 50} source={{ html: '<p>Loading...</p>' }} />
         )}
       </View>
     );
