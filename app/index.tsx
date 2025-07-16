@@ -232,7 +232,7 @@ function AppContent() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Bare Expo</Text>
+        <Text style={styles.title}>SeekDeep</Text>
         <View style={styles.themeSwitcher}>
           <Text style={styles.themeLabel}>Light</Text>
           <Switch
