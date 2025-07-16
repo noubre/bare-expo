@@ -13,7 +13,12 @@ import { View, Text, TextInput, Button, FlatList, StyleSheet, ActivityIndicator,
 import { Worklet } from 'react-native-bare-kit';
 import bundle from './app.bundle.mjs';
 import b4a from 'b4a';
+import { marked } from 'marked';
 import RenderHtml from 'react-native-render-html';
+
+marked.setOptions({
+  async: false,
+});
 import { Picker } from '@react-native-picker/picker';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -38,7 +43,7 @@ const Thought = ({ content }: { content: string }) => {
       </TouchableOpacity>
       {isExpanded && (
         <View style={styles.thoughtContent}>
-          <RenderHtml contentWidth={width - 60} source={{ html: content }} />
+          <RenderHtml contentWidth={width - 60} source={{ html: marked.parse(content) as string }} />
         </View>
       )}
     </View>
@@ -190,7 +195,7 @@ export default function App() {
     if (item.role === 'user') {
       return (
         <View style={[styles.message, styles.userMessage]}>
-          <Text>{item.content}</Text>
+          <RenderHtml contentWidth={width - 40} source={{ html: marked.parse(item.content) as string }} />
         </View>
       );
     }
@@ -204,7 +209,7 @@ export default function App() {
       <View style={[styles.message, styles.aiMessage]}>
         {thoughtContent && <Thought content={thoughtContent} />}
         {mainContent ? (
-          <RenderHtml contentWidth={width - 40} source={{ html: mainContent }} />
+          <RenderHtml contentWidth={width - 40} source={{ html: marked.parse(mainContent) as string }} />
         ) : (
           !thoughtContent && <RenderHtml contentWidth={width - 40} source={{ html: '<p>Loading...</p>' }} />
         )}
