@@ -238,9 +238,9 @@ function AppContent() {
       <View style={styles.header}>
         <Text style={styles.title}>SeekDeep</Text>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <View style={{ marginRight: theme.spacing.medium }}>
-            <Button title="Clear Chat" onPress={clearChat} color={theme.colors.buttonBackground} />
-          </View>
+          <TouchableOpacity onPress={clearChat} style={[styles.clearChatButton, { marginRight: 20 }]}>
+            <Text style={styles.clearChatButtonText}>Clear Chat</Text>
+          </TouchableOpacity>
           <View style={styles.themeSwitcher}>
             <Text style={styles.themeLabel}>Light</Text>
             <Switch
@@ -382,6 +382,17 @@ const getStyles = (theme: any) => StyleSheet.create({
     marginRight: theme.spacing.medium,
     borderRadius: theme.borderRadius.small,
     color: theme.colors.text,
+  },
+  clearChatButton: {
+    backgroundColor: theme.colors.buttonBackground,
+    paddingVertical: theme.spacing.small,
+    paddingHorizontal: theme.spacing.small,
+    borderRadius: theme.borderRadius.small,
+  },
+  clearChatButtonText: {
+    color: theme.colors.text,
+    fontSize: theme.fontSize.medium,
+    fontWeight: 'bold',
   },
   thoughtContainer: {
     marginBottom: theme.spacing.medium,
