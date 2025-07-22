@@ -73,6 +73,10 @@ function AppContent() {
   const { width } = useWindowDimensions();
   const ipcRef = React.useRef<any>(null);
 
+  const clearChat = () => {
+    setMessages([]);
+  };
+
   useEffect(() => {
     const worklet = new Worklet();
 
@@ -233,16 +237,21 @@ function AppContent() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>SeekDeep</Text>
-        <View style={styles.themeSwitcher}>
-          <Text style={styles.themeLabel}>Light</Text>
-          <Switch
-            trackColor={{ false: "#767577", true: "#81b0ff" }}
-            thumbColor={currentThemeName === 'dark' ? "#f5dd4b" : "#f4f3f4"}
-            ios_backgroundColor="#3e3e3e"
-            onValueChange={toggleTheme}
-            value={currentThemeName === 'dark'}
-          />
-          <Text style={styles.themeLabel}>Dark</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ marginRight: theme.spacing.medium }}>
+            <Button title="Clear Chat" onPress={clearChat} color={theme.colors.buttonBackground} />
+          </View>
+          <View style={styles.themeSwitcher}>
+            <Text style={styles.themeLabel}>Light</Text>
+            <Switch
+              trackColor={{ false: "#767577", true: "#81b0ff" }}
+              thumbColor={currentThemeName === 'dark' ? "#f5dd4b" : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={toggleTheme}
+              value={currentThemeName === 'dark'}
+            />
+            <Text style={styles.themeLabel}>Dark</Text>
+          </View>
         </View>
       </View>
       {!connected ? (
