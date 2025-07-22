@@ -31,26 +31,30 @@ export const lightTheme = {
     medium: 16,
     large: 18,
   },
+  fontWeight: {
+    normal: '400',
+    bold: '700',
+  },
 };
 
 export const darkTheme = {
   colors: {
-    background: '#1a202c',
-    text: '#e2e8f0',
+    background: '#121212',
+    text: '#ffffff',
     primary: '#63b3ed',
     secondary: '#a0aec0',
-    userMessageBackground: '#2d3748',
-    aiMessageBackground: '#4a5568',
-    inputBorder: '#4a5568',
+    userMessageBackground: '#262626',
+    aiMessageBackground: '#363636',
+    inputBorder: '#555555',
     buttonBackground: '#63b3ed',
     buttonText: '#ffffff',
-    pickerHeaderBackground: '#2d3748',
+    pickerHeaderBackground: '#1e1e1e',
     pickerHeaderText: '#e2e8f0',
-    thoughtContainerBackground: '#2d3748',
-    thoughtButtonBackground: '#4a5568',
+    thoughtContainerBackground: '#1e1e1e',
+    thoughtButtonBackground: '#363636',
     thoughtButtonText: '#e2e8f0',
-    thoughtContentBackground: '#1a202c',
-    thoughtContainerBorder: '#4a5568',
+    thoughtContentBackground: '#262626',
+    thoughtContainerBorder: '#555555',
   },
   spacing: {
     small: 8,
@@ -65,6 +69,10 @@ export const darkTheme = {
     small: 14,
     medium: 16,
     large: 18,
+  },
+  fontWeight: {
+    normal: '500',
+    bold: '700',
   },
 };
 
