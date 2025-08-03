@@ -11,6 +11,8 @@
   - The application's UI has been modernized with a flexible theming system.
   - A theme switcher has been implemented, allowing users to toggle between light and dark modes.
   - The selected theme is persisted across application sessions using `@react-native-async-storage/async-storage`.
+- **Text Cutoff Fix:**
+  - The issue where AI response text was cut off on the right side has been resolved by adjusting `contentWidth` for `RenderHtml` components in `app/index.tsx` to correctly account for message padding.
 
 **What's Left to Build:**
 - A deeper understanding of the `b4a` integration and its role in data handling is required.
@@ -20,6 +22,7 @@
 - The critical JSON parsing error and the `crypto.getRandomValues()` error have been mitigated.
 - Markdown formatting is now supported across the chat interface.
 - The UI has been modernized with a theme switcher.
+- The text cutoff issue for AI responses has been fixed.
 - The project is now in a more stable state for further development and testing.
 
 **Known Issues:**

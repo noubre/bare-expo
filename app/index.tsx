@@ -52,7 +52,7 @@ const Thought = ({ content }: { content: string }) => {
       </TouchableOpacity>
       {isExpanded && (
         <View style={thoughtStyles.thoughtContent}>
-          <RenderHtml contentWidth={width - 130} source={{ html: marked.parse(content) as string }} />
+          <RenderHtml contentWidth={width - 162} source={{ html: marked.parse(content) as string }} />
         </View>
       )}
     </View>
@@ -211,7 +211,7 @@ function AppContent() {
     if (item.role === 'user') {
       return (
         <View style={[messageStyles.message, messageStyles.userMessage]}>
-          <RenderHtml contentWidth={width - 64} source={{ html: marked.parse(item.content) as string }} />
+          <RenderHtml contentWidth={width - 96} source={{ html: marked.parse(item.content) as string }} />
         </View>
       );
     }
@@ -225,9 +225,9 @@ function AppContent() {
       <View style={[messageStyles.message, messageStyles.aiMessage]}>
         {thoughtContent && <Thought content={thoughtContent} />}
         {mainContent ? (
-          <RenderHtml contentWidth={width - 64} source={{ html: marked.parse(mainContent) as string }} />
+          <RenderHtml contentWidth={width - 96} source={{ html: marked.parse(mainContent) as string }} />
         ) : (
-          !thoughtContent && <RenderHtml contentWidth={width - 64} source={{ html: '<p>Loading...</p>' }} />
+          !thoughtContent && <RenderHtml contentWidth={width - 96} source={{ html: '<p>Loading...</p>' }} />
         )}
       </View>
     );
@@ -360,6 +360,7 @@ const getStyles = (theme: any) => StyleSheet.create({
     padding: theme.spacing.medium,
     marginVertical: theme.spacing.small,
     borderRadius: theme.borderRadius.medium,
+    width: '85%', // Explicitly set width for message bubbles
   },
   userMessage: {
     alignSelf: 'flex-end',
@@ -401,6 +402,7 @@ const getStyles = (theme: any) => StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.thoughtContainerBorder,
     overflow: 'hidden',
+    width: '85%', // Explicitly set width for thought container
   },
   thoughtButton: {
     padding: theme.spacing.medium,
